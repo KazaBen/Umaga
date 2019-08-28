@@ -13,7 +13,7 @@ const router = express.Router();
 // this is our MongoDB database
 const dbRoute = 'mongodb+srv://ben:Umaga123@duombaze-vt9gv.mongodb.net/test?retryWrites=true&w=majority';
 // connects our back end code with the database
-mongoose.connect(dbRoute, { useNewUrlParser: true });
+mongoose.connect(dbRoute, {useNewUrlParser: true});
 
 let db = mongoose.connection;
 
@@ -24,7 +24,7 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // (optional) only made for logging and
 // bodyParser, parses the request body to be a readable json format
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(logger('dev'));
 
@@ -32,28 +32,42 @@ app.use(logger('dev'));
 // this method fetches all available data in our database
 router.get('/getData', (req, res) => {
     Data.find((err, data) => {
-        if (err) return res.json({ success: false, error: err });
-        return res.json({ success: true, data: data });
+        if (err) return res.json({success: false, error: err});
+        return res.json({success: true, data: data});
+    });
+
+});
+
+router.get('/getOneChamp/:id', (req, res) => {
+
+
+    var id = req.params.id;
+
+
+    Data.findOne({ _id: id }, function (err, data) {
+        if (err) return res.json({success: false, error: err});
+
+        return res.json({success: true, data: data});
     });
 });
 
 // this is our update method
 // this method overwrites existing data in our database
 router.post('/updateData', (req, res) => {
-    const { id, update } = req.body;
+    const {id, update} = req.body;
     Data.findByIdAndUpdate(id, update, (err) => {
-        if (err) return res.json({ success: false, error: err });
-        return res.json({ success: true });
+        if (err) return res.json({success: false, error: err});
+        return res.json({success: true});
     });
 });
 
 // this is our delete method
 // this method removes existing data in our database
-router.delete('/deleteData', (req, res) => {
-    const { id } = req.body;
+router.get('/removeOneChamp/:id', (req, res) => {
+    var id = req.params.id;
     Data.findByIdAndRemove(id, (err) => {
         if (err) return res.send(err);
-        return res.json({ success: true });
+        return res.json({success: true});
     });
 });
 
@@ -62,19 +76,24 @@ router.delete('/deleteData', (req, res) => {
 router.post('/putData', (req, res) => {
     let data = new Data();
 
-    const { id, message } = req.body;
+    const {name, armor, attackDamage, mana, hp} = req.body;
 
-    if ((!id && id !== 0) || !message) {
+    if (((!name || !armor || !attackDamage || !mana || !hp))) {
         return res.json({
             success: false,
             error: 'INVALID INPUTS',
         });
     }
-    data.message = message;
-    data.id = id;
+
+    data.name = name;
+    data.armor = armor;
+    data.attackDamage = attackDamage;
+    data.mana = mana;
+    data.hp = hp;
+
     data.save((err) => {
-        if (err) return res.json({ success: false, error: err });
-        return res.json({ success: true });
+        if (err) return res.json({success: false, error: err});
+        return res.json({success: true});
     });
 });
 

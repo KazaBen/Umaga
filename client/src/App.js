@@ -6,59 +6,72 @@ class App extends Component {
     // initialize our state
     state = {
         data: [],
-        id: 0,
-        message: null,
-        intervalIsSet: false,
-        idToDelete: null,
-        idToUpdate: null,
-        objectToUpdate: null,
+        champById: {
+            _id: "",
+            name: ""
+        }
     };
-
-    // when component mounts, first thing it does is fetch all existing data in our db
-    // then we incorporate a polling logic so that we can easily see if our db has
-    // changed and implement those changes into our UI
-    componentDidMount() {
-        this.getDataFromDb();
-        if (!this.state.intervalIsSet) {
-            let interval = setInterval(this.getDataFromDb, 1000);
-            this.setState({ intervalIsSet: interval });
-        }
-    }
-
-    // never let a process live forever
-    // always kill a process everytime we are done using it
-    componentWillUnmount() {
-        if (this.state.intervalIsSet) {
-            clearInterval(this.state.intervalIsSet);
-            this.setState({ intervalIsSet: null });
-        }
-    }
 
     // just a note, here, in the front end, we use the id key of our data object
     // in order to identify which we want to Update or delete.
     // for our back end, we use the object id assigned by MongoDB to modify
     // data base entries
-
-    // our first get method that uses our backend api to
-    // fetch data from our data base
     getDataFromDb = () => {
         fetch('http://localhost:3001/api/getData')
             .then((data) => data.json())
             .then((res) => this.setState({ data: res.data }));
     };
 
+
+    getOneChampById = (id) => {
+        fetch('http://localhost:3001/api/getOneChamp/' + id)
+            .then((data) => data.json())
+            .then((res) => {
+                this.setState({ champById: res.data })
+            });
+    };
+
+    removeOneChampById = (id) => {
+        fetch('http://localhost:3001/api/removeOneChamp/' + id)
+            .then((data) => data.json())
+            .then((res) => {
+            });
+    };
+
+    // our first get method that uses our backend api to
+    // fetch data from our data base
+    getDataFromPandas = () => {
+        fetch('https://api.pandascore.co/lol/champions?token=7kQQkwbXjlSUhK954nWb_Tllp3K13rmJmZRLybkH6Y3-ePZr9wk')
+            .then((data) => data.json())
+            .then((res) => {
+                console.log(res);
+                var champs = [];
+                for(var i = 0; i < res.length; i++) {
+                    champs.push({
+                        name: res[i].name,
+                        armor: res[i].armor,
+                        hp: res[i].hp,
+                        mana: res[i].mp,
+                        attackDamage: res[i].attackdamage
+                    });
+                }
+
+
+                for(var i = 0; i < champs.length; i++) {
+                    this.putDataToDB(champs[i]);
+                }
+            });
+    };
+
     // our put method that uses our backend api
     // to create new query into our data base
-    putDataToDB = (message) => {
-        let currentIds = this.state.data.map((data) => data.id);
-        let idToBeAdded = 0;
-        while (currentIds.includes(idToBeAdded)) {
-            ++idToBeAdded;
-        }
-
+    putDataToDB = ({name, armor, hp, mana, attackDamage}) => {
         axios.post('http://localhost:3001/api/putData', {
-            id: idToBeAdded,
-            message: message,
+            name : name,
+            armor : armor,
+            attackDamage : attackDamage,
+            mana : mana,
+            hp : hp
         });
     };
 
@@ -108,9 +121,9 @@ class App extends Component {
                     {data.length <= 0
                         ? 'NO DB ENTRIES YET'
                         : data.map((dat) => (
-                            <li style={{ padding: '10px' }} key={data.message}>
-                                <span style={{ color: 'gray' }}> id: </span> {dat.id} <br />
-                                <span style={{ color: 'gray' }}> data: </span>
+                            <li style={{ padding: '10px' }}>
+                                <span style={{ color: 'gray' }}> name: </span> {dat.name} <br />
+                                <span style={{ color: 'gray' }}> id: </span> {dat._id} <br />
                                 {dat.message}
                             </li>
                         ))}
@@ -157,7 +170,52 @@ class App extends Component {
                     >
                         UPDATE
                     </button>
+                    <button
+                        onClick={() =>
+                            this.getDataFromDb()
+                        }
+                    >
+                        UPDATE ENTRIES
+                    </button>
+                    <button
+                        onClick={() =>
+                            this.getDataFromPandas()
+                        }
+                    >
+                        UPDATE DATABASE
+                    </button>
                 </div>
+                <div style={{ padding: '10px' }}>
+                    <input
+                        type="text"
+                        onChange={(e) => this.setState({ getChampById: e.target.value })}
+                        placeholder="Get champ by id"
+                        style={{ width: '200px' }}
+                    />
+                    <button onClick={() => this.getOneChampById(this.state.getChampById)}>
+                        GET CHAMP BY ID
+                    </button>
+                </div>
+
+
+                <li style={{ padding: '10px' }}>
+                    <span style={{ color: 'gray' }}> id: {this.state.champById._id}</span> <br />
+                    <span style={{ color: 'gray' }}> name: {this.state.champById.name}</span> <br />
+                </li>
+
+
+                <div style={{ padding: '10px' }}>
+                    <input
+                        type="text"
+                        onChange={(e) => this.setState({ removeChampById: e.target.value })}
+                        placeholder="Remove champ by id"
+                        style={{ width: '200px' }}
+                    />
+                    <button onClick={() => this.removeOneChampById(this.state.removeChampById)}>
+                        REMOVE CHAMP BY ID
+                    </button>
+                </div>
+
             </div>
         );
     }
