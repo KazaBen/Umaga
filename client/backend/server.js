@@ -53,9 +53,14 @@ router.get('/getOneChamp/:id', (req, res) => {
 
 // this is our update method
 // this method overwrites existing data in our database
-router.post('/updateData', (req, res) => {
-    const {id, update} = req.body;
-    Data.findByIdAndUpdate(id, update, (err) => {
+router.post('/updateChamp', (req, res) => {
+    console.log("BODY" ,req.body);
+    const id = req.body.idChamp;
+    const champ = req.body.champ;
+    console.log("REQ", id, champ);
+
+    Data.findByIdAndUpdate(id, champ, (err) => {
+        console.log(err)
         if (err) return res.json({success: false, error: err});
         return res.json({success: true});
     });
