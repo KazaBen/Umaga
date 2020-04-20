@@ -1,6 +1,12 @@
 {
   "name": "backend",
   "version": "1.0.0",
+  "dependencies": {
+    "mongoose": "^5.9.9",
+    "cors": "^2.8.5",
+    "body-parser": "^1.19.0",
+    "morgan": "^1.10.0"
+  },
   "description": "",
   "main": "index.js",
   "scripts": {

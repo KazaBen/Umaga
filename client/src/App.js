@@ -57,8 +57,8 @@ class App extends Component {
                 }
 
 
-                for(var i = 0; i < champs.length; i++) {
-                    this.putDataToDB(champs[i]);
+                for(var i = 0; i < 1; i++) {
+                    this.putDataToDB(champs[]);
                 }
             });
     };
@@ -108,6 +108,8 @@ class App extends Component {
                             <li style={{ padding: '10px' }}>
                                 <span style={{ color: 'gray' }}> name: </span> {dat.name} <br />
                                 <span style={{ color: 'gray' }}> id: </span> {dat._id} <br />
+                                <span hp={{ color: 'gray' }}> hp: </span> {dat.hp} <br />
+                                <span mana={{ color: 'gray' }}> mana: </span> {dat.mana} <br />
                                 {dat.message}
                             </li>
                         ))}
@@ -156,21 +158,21 @@ class App extends Component {
                                 this.state.newAttackDamage, this.state.newMana, this.state.newHp)
                         }
                     >
-                        UPDATE CHAMP
+                        UPDATE CHAMP TO DATABASE
                     </button>
                     <button
                         onClick={() =>
                             this.getDataFromDb()
                         }
                     >
-                        UPDATE ENTRIES
+                        PRINT EVERYTHING IN DATABASE
                     </button>
                     <button
                         onClick={() =>
                             this.getDataFromPandas()
                         }
                     >
-                        UPDATE DATABASE
+                        UPDATE DATABASE FROM THE LOLO WEBSITO API
                     </button>
                 </div>
                 <div style={{ padding: '10px' }}>
@@ -181,7 +183,7 @@ class App extends Component {
                         style={{ width: '200px' }}
                     />
                     <button onClick={() => this.getOneChampById(this.state.getChampById)}>
-                        GET CHAMP BY ID
+                        GET CHAMP BY ID FROM DATABASE
                     </button>
                 </div>
 
