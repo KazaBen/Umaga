@@ -57,7 +57,7 @@ class App extends Component {
                 }
 
 
-                for(var i = 0; i < champs.length; i++) {
+                for(var i = 0; i < 3; i++) {
                     this.putDataToDB(champs[i]);
                 }
             });
