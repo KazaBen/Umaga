@@ -4,6 +4,9 @@ var cors = require('cors');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
 const Data = require('./data');
+const https = require('https');
+const fs = require('fs');
+
 
 const API_PORT = 3001;
 const app = express();
@@ -81,7 +84,7 @@ router.get('/removeOneChamp/:id', (req, res) => {
 router.post('/putData', (req, res) => {
     let data = new Data();
 
-    const {name, armor, attackDamage, mana, hp} = req.body;
+    const {name, armor, attackDamage, mana, hp, photo} = req.body;
 
     if (((!name || !armor || !attackDamage || !mana || !hp))) {
         return res.json({
@@ -95,6 +98,7 @@ router.post('/putData', (req, res) => {
     data.attackDamage = attackDamage;
     data.mana = mana;
     data.hp = hp;
+    data.photo = photo;
 
     data.save((err) => {
         if (err) return res.json({success: false, error: err});
@@ -105,5 +109,13 @@ router.post('/putData', (req, res) => {
 // append /api for our http requests
 app.use('/api', router);
 
-// launch our backend into a port
-app.listen(API_PORT, () => console.log(`LISTENING ON PORT ${API_PORT}`));
+// we will pass our 'app' to 'https' server
+const httpsServer = https.createServer({
+    key: fs.readFileSync('./key.pem'),
+    cert: fs.readFileSync('./cert.pem'),
+    passphrase: 'asdasd'
+}, app);
+
+httpsServer.listen(3001, () => {
+    console.log('HTTPS Server running on port 3001');
+});

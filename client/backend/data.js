@@ -10,7 +10,8 @@ const DataSchema = new Schema(
         attackDamage: Number,
         mana: Number,
         hp: Number,
-        id: Number
+        id: Number,
+        photo: String
     },
     { timestamps: true }
 );

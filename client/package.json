@@ -6,7 +6,9 @@
     "axios": "^0.18.0",
     "react": "^16.5.0",
     "react-dom": "^16.5.0",
-    "react-scripts": "1.1.5"
+    "react-scripts": "1.1.5",
+    "https": "^1.0.0",
+    "fs": "^0.0.1-security"
   },
   "scripts": {
     "start": "react-scripts start",

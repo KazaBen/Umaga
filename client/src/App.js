@@ -17,14 +17,14 @@ class App extends Component {
     // for our back end, we use the object id assigned by MongoDB to modify
     // data base entries
     getDataFromDb = () => {
-        fetch('http://localhost:3001/api/getData')
+        fetch('https://localhost:3001/api/getData')
             .then((data) => data.json())
             .then((res) => this.setState({ data: res.data }));
     };
 
 
     getOneChampById = (id) => {
-        fetch('http://localhost:3001/api/getOneChamp/' + id)
+        fetch('https://localhost:3001/api/getOneChamp/' + id)
             .then((data) => data.json())
             .then((res) => {
                 this.setState({ champById: res.data })
@@ -32,7 +32,7 @@ class App extends Component {
     };
 
     removeOneChampById = (id) => {
-        fetch('http://localhost:3001/api/removeOneChamp/' + id)
+        fetch('https://localhost:3001/api/removeOneChamp/' + id)
             .then((data) => data.json())
             .then((res) => {
             });
@@ -52,7 +52,8 @@ class App extends Component {
                         armor: res[i].armor,
                         hp: res[i].hp,
                         mana: res[i].mp,
-                        attackDamage: res[i].attackdamage
+                        attackDamage: res[i].attackdamage,
+                        photo: res[i].image_url
                     });
                 }
 
@@ -65,13 +66,14 @@ class App extends Component {
 
     // our put method that uses our backend api
     // to create new query into our data base
-    putDataToDB = ({name, armor, hp, mana, attackDamage}) => {
-        axios.post('http://localhost:3001/api/putData', {
+    putDataToDB = ({name, armor, hp, mana, attackDamage, photo}) => {
+        axios.post('https://localhost:3001/api/putData', {
             name : name,
             armor : armor,
             attackDamage : attackDamage,
             mana : mana,
-            hp : hp
+            hp : hp,
+            photo: photo
         });
     };
 
@@ -81,7 +83,7 @@ class App extends Component {
     newAttackDamage, newMana, newHp) => {
 
 
-        axios.post('http://localhost:3001/api/updateChamp', {
+        axios.post('https://localhost:3001/api/updateChamp', {
             idChamp: idChamp,
             champ: {
                 name: newName,
@@ -102,15 +104,19 @@ class App extends Component {
         return (
             <div>
                 <ul>
-                    {data.length <= 0
+                    <div className="container">
+                        <div className="row">
+                        {data.length <= 0
                         ? 'NO DB ENTRIES YET'
                         : data.map((dat) => (
-                            <li style={{ padding: '10px' }}>
+                                <li class="col-md-4">
                                 <span style={{ color: 'gray' }}> name: </span> {dat.name} <br />
                                 <span style={{ color: 'gray' }}> id: </span> {dat._id} <br />
-                                {dat.message}
+                                <img src={dat.photo}/>
                             </li>
                         ))}
+                        </div>
+                    </div>
                 </ul>
                 <div style={{ padding: '10px' }}>
                     <input
@@ -203,9 +209,6 @@ class App extends Component {
                         REMOVE CHAMP BY ID
                     </button>
                 </div>
-
-
-
 
             </div>
 
